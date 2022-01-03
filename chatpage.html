@@ -1,0 +1,201 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundspace</title>
+    <link rel="stylesheet" href="./chat.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
+    />
+    <script src="https://kit.fontawesome.com/51c0086ffa.js" crossorigin="anonymous"></script>
+    <script src=""></script>
+</head>
+<body>
+    <div class="preloader">
+        <h1 class="preloader-text1">Hi</h1>
+        <h1 class="preloader-text2">This is Soundspace</h1>
+    </div>
+   <!-- NAV BAR -->
+   <nav>
+    
+    <div class="exit-button">
+        <p id="exit-button" style="cursor: pointer;"><i class="fas fa-sign-out-alt fa-2x"></i></p>
+        <script>document.getElementById('exit-button').addEventListener("click", () => {
+                window.location.href = "./loginn.html";
+            })
+        </script>
+    </div>
+    
+    <ul class="nav-links">
+        <p><i class="fas fa-home fa-2x"></i></p>
+        <p><i class="fas fa-search fa-2x"></i></p>
+        <p><i class="fas fa-heart fa-2x"></i></p>
+        <p><a href="../index.html"><i class="fas fa-camera fa-2x"></a></i></p>
+    </ul>
+    <div class="settings">
+        <p><i class="fas fa-cog fa-2x"></i></p>
+        <p><i class="fas fa-user-circle fa-2x"></i></p>
+    </div>
+</nav>
+<!-- Chat Box  -->
+
+<div class="chat-header">
+    <h1 style="color: white;">Chat box</h1>
+</div>
+<div class="chat-area">
+    <div class="chat-inside">
+    <div class="messages"></div>
+    <div class="chat-input">
+        <input type="text" id="input-text" placeholder="Enter Your Messsage">
+        <input type="submit" id="send-button" value="Send">
+    </div>
+</div>
+</div>
+
+
+<!-- Now Playing  -->
+<div class="now-playing-section">
+
+    <p>Friends Activity</p>
+    <div class="friends-tab"></div>
+    </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/7.13.2/firebase.js"></script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import { getDatabase,ref, set,push,child,onChildAdded,onValue,update,get} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+     // import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+      import { getStorage ,ref as sRef, uploadBytes, uploadBytesResumable,listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+      import { getAuth, createUserWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+      import * as firebase from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+      import {getFirestore,collection,addDoc,query,orderBy,limit,onSnapshot,setDoc,updateDoc,doc,serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+      import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js';
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCDquNbc161bzsm7TV0XtgDff47nB_K3JE",
+        authDomain: "soundemic-4f707.firebaseapp.com",
+        databaseURL: "https://soundemic-4f707-default-rtdb.firebaseio.com",
+        projectId: "soundemic-4f707",
+        storageBucket: "soundemic-4f707.appspot.com",
+        messagingSenderId: "446088034759",
+        appId: "1:446088034759:web:494df0810824586e2741e2"
+      };
+     
+  
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(); 
+const database = getDatabase();
+const storage = getStorage();
+
+
+window.myname = "";
+onAuthStateChanged(auth, (user) => {
+       if (user) {
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      window.userid = user.uid;
+      console.log(userid);
+      
+      return onValue(ref(database, 'users/' + userid), (snapshot) => {
+        var data = snapshot.val();
+        myname = data.username;
+      console.log("my name is "+myname);
+  // ...
+}, {
+  onlyOnce: true
+});
+     }
+      else {
+       alert('USER NOT SIGNED IN')
+      }
+    });
+
+
+function sendtext(x){
+    document.querySelector(".chat-header").innerHTML = "<h1>Send a text to:" +x+"</h1>";
+    document.getElementById('send-button').addEventListener("click", () => {
+    const newPostKey = push(child(ref(database), 'messages/')).key;
+    var message = document.getElementById('input-text').value 
+    console.log("text is "+message)
+    update(ref(database, 'messages/'+ newPostKey), {
+    message : message,
+    sender : myname,
+    receiver : x,
+    
+    })
+
+    });
+}
+
+
+ const dbRef = ref(database, 'messages/');
+ onChildAdded(dbRef, (snapshot) => {
+        var childKey = snapshot.key;
+        console.log(childKey);
+        var childData = snapshot.val();
+        console.log(childData.sender);
+
+       
+       var html = "";
+       
+        html += "<li>"+childData.sender + ": " + childData.message+"</li>";
+        
+ 
+        document.querySelector(".messages").innerHTML += html 
+     
+ })
+
+
+
+  window.userslist = [];
+
+       onChildAdded(ref(database, 'users/'), (snapshot) => {
+      
+        var childData2 = snapshot.key;
+        var childData2 = snapshot.val();
+        console.log(childData2.username)
+        
+        let div1 = document.createElement("div");
+        let div2 = document.createElement("div");
+
+       
+
+        
+        div1.className = 'friend';
+        div1.innerHTML = "<h3>"+childData2.username+"</h3>"
+        div2.className = 'friend-chat'
+       // div2.type = 'chat-button'
+       div2.type = 'button'
+       div2.className = 'chat-button'
+       div2.innerHTML = "chat now"
+       
+       div2.onclick = () => {
+          
+        sendtext(childData2.username);
+
+        }
+
+         
+ // window.open('file:///C:/Users/User/Desktop/CSE327/fall21.cse299.6.5/project/chat.html');
+
+        document.querySelector(".friends-tab").appendChild(div1);
+       // document.querySelector(".friend-info").appendChild(div2);
+        div1.appendChild(div2);
+        
+    },) 
+
+   
+  
+ 
+</script>
+
+
+
+</body>
+</html>
