@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+body{
+    background-color: #0c0c0c;
+    overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 100vw;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #1b1b1b;
+    border-radius: 100vw;
+  }
+
+  .chat-button{
+      background-color: #FFD369;
+      color: black;
+      border: 2px solid transparent;
+      padding: 3px;
+      width: 50px;
+      font-weight: 600;
+  }
+
+  .chat-button:hover{
+      border: 2px solid white;
+  }
+
+.preloader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 5;
+    background-color: #0c0c0c;
+    color: white;
+    font-size: 50px;
+    text-align: center;
+    animation: disappear 2s forwards;
+    animation-delay: 4s;
+    /* display: none; */
+}
+
+.preloader-text1{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+    animation: blink 2s forwards;
+    opacity: 0;
+}
+
+.preloader-text2{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+    animation: blink 2s forwards;
+    animation-delay: 2s;
+    opacity: 0;
+}
+
+@keyframes blink{
+    0%{
+        opacity: 0;
+    }
+    50%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+
+@keyframes disappear{
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+
+
+/* NAV */
+nav{
+    height: 100vh;
+    width: 120px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav p{
+    padding: 6px;
+    border-radius: 5px;
+}
+
+nav p:hover{
+    background-color: #1b1b1b;
+    cursor: pointer;
+}
+
+.nav-links{
+    text-align: center;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.settings{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* MAIN AREA */
+.main-area{
+    height: 100vh;
+    width: 100vw;
+    background-color: #0c0c0c;
+    padding: 20px 370px 20px 140px;
+    overflow-y: scroll;
+}
+
+
+.main-header{
+    display: flex;
+    padding: 20px 0 0 140px; 
+    flex-direction: row;
+    
+}
+
+#submit {
+    background-color: blue;
+}
+
+
+
+.main-sections{
+    height: 40%;
+    background-color: black;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.fresh-album-cards{
+    display: flex;
+    gap: 20px;
+}
+
+.recently-played-cards{
+    display: flex;
+    gap: 20px;
+}
+
+.search-result-cards{
+    display: flex;
+    gap: 20px;
+}
+
+.cards{
+    display: flex;
+    gap: 20px;
+}
+
+.card{
+    width: 250px;
+    height: 210px;
+    background-color: violet;
+    border-radius: 10px;
+    background-size: contain;
+    padding: 15px;
+    
+}
+
+.card:hover{
+    background-size:cover;
+}
+
+
+
+/* RIGHT SIDE */
+.now-playing-section{
+    background-color: black;
+    height: 100vh;
+    width: 350px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 20px;
+}
+
+.song-thumbnail{
+    background-color: #0c0c0c;
+    height: 200px;
+    margin-top: 20px;
+    background-image: url("https://firebasestorage.googleapis.com/v0/b/soundemic-4f707.appspot.com/o/KOBE_NEMESIS%2FThumbnail?alt=media&token=c34ebabe-4bbd-4659-b4e4-ff22221376cb");
+    background-size: cover;
+}
+
+.song-name{
+    height: 30px;
+    background-color: #0c0c0c;
+    margin-top: 20px;
+    padding: 3px;
+}
+
+.artist-name{
+    height: 30px;
+    background-color: #0c0c0c;
+    margin-top: 20px;
+    padding: 3px;
+}
+
+.progress-bar{
+    height: 30px;
+    background-color: #0c0c0c;
+    margin-top: 20px;
+    padding: 3px;
+}
+
+.interactive-progress {
+    margin-top: 20px;
+    padding: 3px;
+    margin: auto;
+    right: 0;
+    left: 0;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: white;
+    background: none;
+    top: 63px;
+    outline: white;
+  }
+
+  .interactive-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: auto;
+    height: 17px;
+    width: 17px;
+    border-radius: 50px;
+    background: white;
+  }
+
+.music-controls{
+    height: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.music-controls i:hover{
+    cursor: pointer;
+}
+
+.friends-tab{
+    height: 300px;
+    background-color: #0c0c0c;
+    margin-top: 5px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.friend{
+    background-color: black;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
