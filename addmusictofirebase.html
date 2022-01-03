@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang = "en"> ::-webkit-scrollbar
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+   <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+<title> upload page </title>
+
+<body>
+<h1> add music </h1>
+
+<input class = "uploadSongName" type="text" id="uploadSongName" name="uploadSongName" placeholder="Song Name">
+<input class = "uploadArtistName" type="text" id="uploadArtistName" name="uploadArtistName"  placeholder="Artist Name">
+
+<input class = "uploadThumbnail" type="file" value=upload data-buttontext="thumbnail" accept="image/jpeg,image/gif/image/jpg"> 
+<input type="file" value="upload" class="uploadMusic" data-buttontext="Music" accept="audio/mp3,audio/odd,audio/wav">
+
+<progress value="0" min="0" max="100" class="uploadProgress" id="thumbnailUpload">
+    Thumbnail Upload Progress</progress>
+    <progress value="0" min="0" max="100" class="uploadProgress" id="bgUpload">
+        Background Upload Progress</progress>
+        <progress value="0" min="0" max="100" class="uploadProgress" id="audioUpload">
+            Audio Upload Progress</progress>
+</body>
+<script src="https://www.gstatic.com/firebasejs/7.13.2/firebase.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getDatabase,ref, set,push,child,onChildAdded,onValue,update} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+ // import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+  import { getStorage ,ref as sRef, uploadBytes, uploadBytesResumable,listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+  import { getAuth, createUserWithEmailAndPassword,signOut,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+  import * as firebase from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDquNbc161bzsm7TV0XtgDff47nB_K3JE",
+    authDomain: "soundemic-4f707.firebaseapp.com",
+    databaseURL: "https://soundemic-4f707-default-rtdb.firebaseio.com",
+    projectId: "soundemic-4f707",
+    storageBucket: "soundemic-4f707.appspot.com",
+    messagingSenderId: "446088034759",
+    appId: "1:446088034759:web:494df0810824586e2741e2"
+  };
+
+  // Initialize Firebase
+ //const app = initializeApp(firebaseConfig);
+//firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+  //const database = getDatabase(app);
+  const auth = getAuth();
+  //const app = initializeApp(firebaseConfig);
+       
+        const database = getDatabase();
+        //const db = getFirestore();
+       // const auth = getAuth();
+        const storage = getStorage();
+       // const storage = getStorage();
+
+   
+  //var databaseRef = firebase.database().ref();
+ // databaseRef.child('songs/').push(document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value);
+ 
+  document.querySelector(".uploadThumbnail").addEventListener("change", function (e) {
+    console.log(e);
+    var thumbnail = e.target.files[0];
+    //var databaseRef = app.database().ref();
+    var storageRef = sRef(storage,document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value +"/Thumbnail");
+    //var task = storageRef.put(audio);
+    const uploadTask = uploadBytesResumable(storageRef,thumbnail);
+
+    uploadTask.on('state_changed', (snapshot) => {
+     //Observe state change events such as progress, pause, and resume
+     //Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    document.querySelector("#thumbnailUpload").value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    console.log('Upload is ' + progress + '% done');
+    switch (snapshot.state) {
+      case 'paused':
+        console.log('Upload is paused');
+      break;
+      case 'running':
+        console.log('Upload is running');
+        break;
+    } },function(error){console.log(error)},function(){
+     getDownloadURL(sRef(storage, document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value +"/Thumbnail"))
+
+    } ) });
+    
+//document.querySelector(".uploadBg").addEventListener("change", function (e) {
+  //console.log(e);
+  //var bg = e.target.files[0];
+  //var databaseRef = firebase.database().ref();
+ // var storageRef = ref( storage,document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value +"/Background"
+    //);
+ // var task = storageRef.put(audio);
+ //const uploadTask = uploadBytesResumable(storageRef, bg);
+ 
+  
+//});
+
+document.querySelector(".uploadMusic").addEventListener("change", function (e) {
+  console.log(e);
+  var audio = e.target.files[0];
+  //var databaseRef = firebase.database().ref();
+  var storageRef =sRef(storage,document.querySelector(".uploadSongName").value +
+        "_" +
+        document.querySelector(".uploadArtistName").value +
+        "/Audio"
+    );
+  //var task = storageRef.put(audio);
+  const uploadTask = uploadBytesResumable(storageRef, audio);
+  
+  //var storageRef = firebase.storage().ref("MusicFileNames");
+ // var databaseRef = firebase.database.ref;
+ uploadTask.on('state_changed', (snapshot) => {
+     //Observe state change events such as progress, pause, and resume
+     //Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    document.querySelector("#audioUpload").value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    console.log('Upload is ' + progress + '% done');
+    switch (snapshot.state) {
+      case 'paused':
+        console.log('Upload is paused');
+      break;
+      case 'running':
+        console.log('Upload is running');
+        break;
+    } },function(error){console.log(error)},function(){
+   //databaseRef.child("MusicFileNames").push(document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value 
+   const newPostKey = push(child(ref(database), 'MusicFileNames')).key;
+
+var songname = document.getElementById('uploadSongName').value;
+var artistname = document.getElementById('uploadArtistName').value;
+set(ref(database, 'MusicFileNames/' + newPostKey), {
+SongName : songname,
+ArtistName : artistname,
+})
+var imgurl = null;
+var songurl = null;
+
+getDownloadURL(sRef(storage, document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value +"/Thumbnail")).then((downloadURL)=> { update(ref(database, 'MusicFileNames/' + newPostKey),{
+  ImgUrl : downloadURL
+} )});
+
+
+getDownloadURL(sRef(storage, document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value +"/Audio")).then((downloadURL)=>{update(ref(database, 'MusicFileNames/' + newPostKey),{
+  SongUrl : downloadURL
+})});
+
+}  )});
+
+
+ 
+const dbRef = ref(database, 'MusicFileNames/');
+
+onValue(dbRef, (snapshot) => {
+  snapshot.forEach((childSnapshot) => {
+    const childKey = childSnapshot.key;
+    console.log(childKey);
+    const childData = childSnapshot.val();
+    console.log(childData.SongName);
+    // ...
+  });
+}, {
+  onlyOnce: true
+});
+
+       
+  //var databaseRef = ref(database,"MusicFileNames");
+  //databaseRef.push(document.querySelector(".uploadSongName").value +"_" +document.querySelector(".uploadArtistName").value );
+
+   
+
+
+</script>
+
+</html>
